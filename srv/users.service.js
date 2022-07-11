@@ -1,6 +1,9 @@
 module.exports = (srv) => {
-    srv.on('getCurrentUserID', (req) => {
+    srv.before ('READ','*', (req)=>{
         console.log(req.user)
+    })
+
+    srv.on('getCurrentUserID', (req) => {
         return req.user.id;
     });
 }
