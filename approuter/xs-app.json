@@ -7,7 +7,7 @@
         {
             "source": "^(.*)",
             "target": "/$1",
-            "destination": "service",
+            "destination": "user-endpoint-srv-desti",
             "authenticationType": "xsuaa"
         }
     ]

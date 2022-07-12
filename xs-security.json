@@ -10,8 +10,7 @@
             "https://*.eu10.applicationstudio.cloud.sap/**",
             "https://*.applicationstudio.cloud.sap/**",
             "https://*.cfapps.eu10.hana.ondemand.com/**",
-            "https://*.eu10.hana.ondemand.com/**",
-            "http://localhost*:**"
+            "https://*.eu10.hana.ondemand.com/**"
         ]
     }
 }

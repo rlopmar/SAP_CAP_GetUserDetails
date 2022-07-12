@@ -10,6 +10,7 @@ build-parameters:
     - builder: custom
       commands:
         - npx -p @sap/cds-dk cds build --production
+        - npm --prefix ./approuter install ./approuter --only=prod --no-optional
 
 modules:
   - name: user-endpoint-srv
@@ -35,6 +36,17 @@ modules:
     requires:
       - name: user-endpoint-db
 
+  # AppRouter NodeJS instance
+  - name: user-endpoint-approuter
+    type: nodejs
+    path: approuter
+    parameters:
+      disk-quota: 512M
+      memory: 512M
+    requires:
+      - name: user-endpoint-auth
+      - name: user-endpoint-destination-service
+
 resources:
   - name: user-endpoint-db
     type: com.sap.xs.hdi-container
@@ -51,3 +63,26 @@ resources:
       config:
         xsappname: user-endpoint-xsapp
         tenant-mode: dedicated
+
+  - name: user-endpoint-destination-service
+    #type: org.cloudfoundry.existing-service # Comment this line and uncomment the following ones if the instance does not exist yet
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
+    parameters:
+      service-name: user-endpoint-destination-service
+      service: destination
+      service-plan: lite
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Name: user-endpoint-srv-desti
+                Description: Destination to user endpoint srv server
+                Authentication: NoAuthentication
+                ProxyType: Internet
+                Type: HTTP
+                URL: ~{srv-api/srv-url}
+                HTML5.ForwardAuthToken: true
