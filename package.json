@@ -51,17 +51,27 @@
         "kind": "sql"
       },
       "auth": {
-        "kind": "jwt-auth",
-        "[development]": {
-          "kind": "jwt-auth",
-          "strategy": "dummy",
+        "kind": "xsuaa",
+        "[aaa]": {
+          "kind": "basic-auth",
           "users": {
-            "*": true
+            "foo": {
+              "password": "123456",
+              "roles": [
+                "dummy"
+              ],
+              "userAttributes": {
+                "dummy": 1
+              }
+            }
           }
         }
       },
       "uaa": {
         "kind": "xsuaa"
+      },
+      "approuter": {
+        "kind": "cloudfoundry"
       }
     },
     "hana": {

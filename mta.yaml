@@ -36,16 +36,21 @@ modules:
     requires:
       - name: user-endpoint-db
 
-  # AppRouter NodeJS instance
   - name: user-endpoint-approuter
-    type: nodejs
-    path: approuter
+    type: approuter.nodejs
+    path: approuter/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
     parameters:
-      disk-quota: 512M
-      memory: 512M
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
     requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
       - name: user-endpoint-auth
-      - name: user-endpoint-destination-service
 
 resources:
   - name: user-endpoint-db
@@ -63,26 +68,3 @@ resources:
       config:
         xsappname: user-endpoint-xsapp
         tenant-mode: dedicated
-
-  - name: user-endpoint-destination-service
-    #type: org.cloudfoundry.existing-service # Comment this line and uncomment the following ones if the instance does not exist yet
-    type: org.cloudfoundry.managed-service
-    requires:
-      - name: srv-api
-    parameters:
-      service-name: user-endpoint-destination-service
-      service: destination
-      service-plan: lite
-      config:
-        HTML5Runtime_enabled: true
-        init_data:
-          instance:
-            existing_destinations_policy: update
-            destinations:
-              - Name: user-endpoint-srv-desti
-                Description: Destination to user endpoint srv server
-                Authentication: NoAuthentication
-                ProxyType: Internet
-                Type: HTTP
-                URL: ~{srv-api/srv-url}
-                HTML5.ForwardAuthToken: true
